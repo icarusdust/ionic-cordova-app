@@ -6,7 +6,7 @@ workflows:
       groups:
           - app_store_credentials # <-- (Includes APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_PRIVATE_KEY)
       vars:      
-        BUNDLE_ID: "io.codemagic.ioniccordova" # <-- Put your Bundle Id here 
+        BUNDLE_ID: "io.myapp.ioniccordova" # <-- Put your Bundle Id here 
       xcode: latest
       node: v16.11.1
     scripts:
