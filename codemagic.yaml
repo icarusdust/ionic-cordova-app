@@ -15,4 +15,5 @@ workflows:
         script: |
             set -e
             yarn install
+            yarn global add @quasar/cli
             quasar b -m ios
