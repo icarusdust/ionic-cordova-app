@@ -54,7 +54,7 @@ workflows:
                 }
               }
           EOF
-            cd quasar-project && yarn install && quasar build ios --release --device
+            cd quasar-project && yarn install && quasar b -m ios --release --device
 #           ionic cordova build ios --release --device --buildConfig='build.json' 
     artifacts:
       - /Users/builder/clone/platforms/ios/build/device/*.ipa
