@@ -18,7 +18,6 @@ workflows:
           cvm use 9.0.0
           npm install -g ionic
           ionic info
-          yarn global add @quasar/cli
       - name: Setup iOS
         script: |
           ionic cordova prepare 
@@ -54,7 +53,7 @@ workflows:
                 }
               }
           EOF
-            quasar build -m ios -- --release --device --buildConfig='../build.json'
+            cd quasar-project && quasar build -m ios -- --release --device
 #           ionic cordova build ios --release --device --buildConfig='build.json' 
     artifacts:
       - /Users/builder/clone/platforms/ios/build/device/*.ipa
