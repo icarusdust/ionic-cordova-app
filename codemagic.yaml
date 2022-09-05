@@ -18,8 +18,7 @@ workflows:
           cvm use 9.0.0
           npm install -g ionic
           ionic info
-          npm i -g @quasar/cli
-          npm init quasar
+          yarn global add @quasar/cli
       - name: Setup iOS
         script: |
           ionic cordova prepare 
