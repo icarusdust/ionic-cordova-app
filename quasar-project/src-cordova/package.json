@@ -16,5 +16,8 @@
     "platforms": [
       "ios"
     ]
+  },
+  "devDependencies": {
+    "cordova-ios": "^6.2.0"
   }
 }
