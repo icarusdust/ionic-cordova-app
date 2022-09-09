@@ -16,4 +16,9 @@ workflows:
             set -e
             yarn install
             yarn global add @quasar/cli
+            ionic cordova platform remove ios 
+            ionic cordova platform add ios --save
+            npm i -g cordova-res
+            ionic cordova resources ios --force
             quasar b -m ios
+
