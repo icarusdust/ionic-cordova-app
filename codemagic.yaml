@@ -26,6 +26,7 @@
 workflows:
   ios-workflow:
     name: iOS workflow
+    instance_type: mac_pro
     environment:
       groups:
         # Add the group environment variables in Codemagic UI (either in Application/Team variables) - https://docs.codemagic.io/variables/environment-variable-groups/
@@ -48,10 +49,6 @@ workflows:
           cvm use 9.0.0
           npm install -g ionic
           ionic info   
-                      
-          yarn install
-          yarn global add @quasar/cli
-          
       - name: Setup iOS
         script: |
           ionic cordova platform remove ios --nosave
@@ -87,8 +84,10 @@ workflows:
                   }
                 }
               }
-          EOF
-          quasar build -m cordova -T ios -- --release --device
+          EOF                              
+          yarn install
+          yarn global add @quasar/cli
+          quasar build -m cordova -T ios -- --release --device --buildConfig='build.json'
 #           ionic cordova build ios --release --device --buildConfig='build.json' 
     artifacts:
       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*.ipa
