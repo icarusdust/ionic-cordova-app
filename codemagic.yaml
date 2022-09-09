@@ -17,6 +17,6 @@ workflows:
             yarn install
             yarn global add @quasar/cli
             quasar b -m ios
-     artifacts:
+   artifacts:
        - /Users/builder/clone/platforms/ios/build/device/*.ipa
        - /tmp/xcodebuild_logs/*.log  
