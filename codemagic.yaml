@@ -45,8 +45,6 @@ workflows:
           set -e
           npm install
           npm ci
-          cvm install 9.0.0
-          cvm use 9.0.0
           npm install -g ionic
           ionic info   
       - name: Setup iOS
