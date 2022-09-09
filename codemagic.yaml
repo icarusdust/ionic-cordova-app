@@ -1,25 +1,98 @@
+# workflows:
+#   ios-workflow:
+#     name: iOS workflow
+#     instance_type: mac_pro
+#     environment:
+#       groups:
+#           - app_store_credentials 
+#       vars:      
+#         BUNDLE_ID: "io.myapp.ioniccordova" # <-- Put your Bundle Id here 
+#       xcode: latest
+#       node: v16.11.1
+#     working_directory: quasar-project
+#     scripts:
+#       - name: Build iOS
+#         script: |
+#             set -e
+#             yarn install
+#             yarn global add @quasar/cli
+#             quasar build -m cordova -T ios -- --release --device
+#     artifacts:
+#       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*.ipa
+#       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*
+#       - /Users/builder/clone/platforms/ios/*
+#       - /Users/builder/clone/cordova/platforms/ios/build/device/*.ipa
+#       - /tmp/xcodebuild_logs/*.log
 workflows:
   ios-workflow:
     name: iOS workflow
-    instance_type: mac_pro
     environment:
       groups:
-          - app_store_credentials # <-- (Includes APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_PRIVATE_KEY)
+        # Add the group environment variables in Codemagic UI (either in Application/Team variables) - https://docs.codemagic.io/variables/environment-variable-groups/
+          - app_store
       vars:      
         BUNDLE_ID: "io.myapp.ioniccordova" # <-- Put your Bundle Id here 
       xcode: latest
       node: v16.11.1
-    working_directory: quasar-project
+      npm: 6
+    cache:
+      cache_paths:
+        - $FCI_BUILD_DIR/node_modules
     scripts:
+      - name: Install dependencies
+        script: |
+          set -e
+          npm install
+          npm ci
+          cvm install 9.0.0
+          cvm use 9.0.0
+          npm install -g ionic
+          ionic info   
+                      
+          yarn install
+          yarn global add @quasar/cli
+          
+      - name: Setup iOS
+        script: |
+          ionic cordova platform remove ios --nosave
+          ionic cordova platform add ios --confirm --no-interactive --noresources --save  
+      - name: Set up keychain to be used for codesigning using Codemagic CLI 'keychain' command
+        script: |
+          keychain initialize
+      - name: Fetch signing files
+        script: |
+          app-store-connect fetch-signing-files $BUNDLE_ID --type IOS_APP_STORE --create
+      - name: Add certificates to keychain
+        script: |
+          keychain add-certificates         
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles
       - name: Build iOS
         script: |
-            set -e
-            yarn install
-            yarn global add @quasar/cli
-            quasar build -m cordova -T ios -- --release --device
+          package_type=$(defaults read ~/export_options.plist method)
+          identity=$(defaults read ~/export_options.plist signingCertificate)
+          team=$(defaults read ~/export_options.plist teamID)
+          profile=$(find '/Users/builder/Library/MobileDevice/Provisioning Profiles' -name "*.mobileprovision")
+          profile_uuid=$(grep UUID -A1 -a "$profile" | grep -io "[-A-F0-9]\{36\}")
+        
+          cat <<EOF > build.json
+              {
+                "ios": {
+                  "release": {
+                    "codeSignIdentity": "$identity",
+                    "developmentTeam": "$team",
+                    "packageType": "$package_type",
+                    "provisioningProfile": "$profile_uuid"
+                  }
+                }
+              }
+          EOF
+          quasar build -m cordova -T ios -- --release --device
+#           ionic cordova build ios --release --device --buildConfig='build.json' 
     artifacts:
       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*.ipa
       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*
       - /Users/builder/clone/platforms/ios/*
       - /Users/builder/clone/cordova/platforms/ios/build/device/*.ipa
-      - /tmp/xcodebuild_logs/*.log
+      - /tmp/xcodebuild_logs/*.log 
