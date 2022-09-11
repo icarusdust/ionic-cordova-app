@@ -16,7 +16,7 @@ workflows:
             set -e
             yarn install
             yarn global add @quasar/cli
-            quasar build -m cordova -T ios -- --release --device
+            quasar build -m cordova -T ios
     artifacts:
       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*.ipa
       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*
