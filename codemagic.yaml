@@ -11,6 +11,10 @@ workflows:
       node: v16.11.1
     working_directory: quasar-project
     scripts:
+      - name: Yarn install
+        script: |
+          yarn install
+          yarn global add @quasar/cli
       - name: Setup iOS
         script: |
           ionic cordova platform remove ios --nosave
@@ -47,8 +51,6 @@ workflows:
                 }
               }
           EOF
-          yarn install
-          yarn global add @quasar/cli
           quasar build -m ios --release --device --buildConfig='build.json' 
 #           yarn install
 #           yarn global add @quasar/cli
