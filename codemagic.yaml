@@ -6,7 +6,7 @@ workflows:
       groups:
           - app_store_credentials 
       vars:      
-        BUNDLE_ID: "org.cordova.quasar.app" # <-- Put your Bundle Id here 
+        BUNDLE_ID: "org.codemagic.quasar.app" # <-- Put your Bundle Id here 
       xcode: latest
       node: v16.11.1
     working_directory: quasar-project
