@@ -1,13 +1,13 @@
 workflows:
   ios-workflow:
     name: iOS workflow
-    instance_type: mac_mini_m1
+    instance_type: mac_mini
     environment:
       groups:
           - app_store_credentials 
       vars:      
         BUNDLE_ID: "org.codemagic.quasar.app" # <-- Put your Bundle Id here 
-      xcode: latest
+      xcode: 13.0
       node: v16.11.1
     working_directory: quasar-project
     scripts:
