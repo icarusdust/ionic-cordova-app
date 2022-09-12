@@ -11,10 +11,16 @@ workflows:
       node: v16.11.1
     working_directory: quasar-project
     scripts:
-#       - name: Yarn install
-#         script: |
-#           yarn install
-#           yarn global add @quasar/cli
+      - name: Install dependencies
+        script: |
+          yarn global add @quasar/cli
+          yarn install
+          cd src-cordova
+          yarn install
+          mkdir www
+          cordova prepare ios
+          cordova plugin save
+          cd ..
 #       - name: Setup iOS
 #         script: |
 #           ionic cordova platform remove ios --nosave
