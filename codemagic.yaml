@@ -11,47 +11,51 @@ workflows:
       node: v16.11.1
     working_directory: quasar-project
     scripts:
-      - name: Yarn install
-        script: |
-          yarn install
-          yarn global add @quasar/cli
-      - name: Setup iOS
-        script: |
-          ionic cordova platform remove ios --nosave
-          ionic cordova platform add ios --confirm --no-interactive --noresources --save  
-      - name: Set up keychain to be used for codesigning using Codemagic CLI 'keychain' command
-        script: |
-          keychain initialize
-      - name: Fetch signing files
-        script: |
-          app-store-connect fetch-signing-files $BUNDLE_ID --type IOS_APP_STORE --create          
-      - name: Add certificates to keychain
-        script: |
-          keychain add-certificates         
-      - name: Set up code signing settings on Xcode project
-        script: |
-          xcode-project use-profiles
-      - name: Build iOS
-        script: | 
-          set -e
-          package_type=$(defaults read ~/export_options.plist method)
-          identity=$(defaults read ~/export_options.plist signingCertificate)
-          team=$(defaults read ~/export_options.plist teamID)
-          profile=$(find '/Users/builder/Library/MobileDevice/Provisioning Profiles' -name "*.mobileprovision")
-          profile_uuid=$(grep UUID -A1 -a "$profile" | grep -io "[-A-F0-9]\{36\}")       
-          cat <<EOF > build.json
-              {
-                "ios": {
-                  "release": {
-                    "codeSignIdentity": "$identity",
-                    "developmentTeam": "$team",
-                    "packageType": "$package_type",
-                    "provisioningProfile": "$profile_uuid"
-                  }
-                }
-              }
-          EOF
-          quasar build -m ios --release --device --buildConfig='build.json' 
+#       - name: Yarn install
+#         script: |
+#           yarn install
+#           yarn global add @quasar/cli
+#       - name: Setup iOS
+#         script: |
+#           ionic cordova platform remove ios --nosave
+#           ionic cordova platform add ios --confirm --no-interactive --noresources --save  
+#       - name: Set up keychain to be used for codesigning using Codemagic CLI 'keychain' command
+#         script: |
+#           keychain initialize
+#       - name: Fetch signing files
+#         script: |
+#           app-store-connect fetch-signing-files $BUNDLE_ID --type IOS_APP_STORE --create          
+#       - name: Add certificates to keychain
+#         script: |
+#           keychain add-certificates         
+#       - name: Set up code signing settings on Xcode project
+#         script: |
+#           xcode-project use-profiles
+#       - name: Build iOS
+#         script: | 
+#           set -e
+#           package_type=$(defaults read ~/export_options.plist method)
+#           identity=$(defaults read ~/export_options.plist signingCertificate)
+#           team=$(defaults read ~/export_options.plist teamID)
+#           profile=$(find '/Users/builder/Library/MobileDevice/Provisioning Profiles' -name "*.mobileprovision")
+#           profile_uuid=$(grep UUID -A1 -a "$profile" | grep -io "[-A-F0-9]\{36\}")       
+#           cat <<EOF > build.json
+#               {
+#                 "ios": {
+#                   "release": {
+#                     "codeSignIdentity": "$identity",
+#                     "developmentTeam": "$team",
+#                     "packageType": "$package_type",
+#                     "provisioningProfile": "$profile_uuid"
+#                   }
+#                 }
+#               }
+#           EOF
+        - name: Quasar
+          script: |
+            yarn install
+            yarn global add @quasar/cli
+            quasar build -m ios 
 #           yarn install
 #           yarn global add @quasar/cli
 #           cd quasar-project && yarn install && quasar build ios -- --release --device --buildConfig='build.json' 
