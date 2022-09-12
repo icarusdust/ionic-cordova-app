@@ -57,9 +57,8 @@ workflows:
                 }
               }
           EOF
-            yarn install
-            yarn global add @quasar/cli
-            quasar build -m ios --release --device --buildConfig='build.json'
+#       quasar build -m ios --release --device --buildConfig='build.json'
+            quasar build -m cordova -T ios -- --release --device --buildConfig='/build.json'
 #           yarn install
 #           yarn global add @quasar/cli
 #           cd quasar-project && yarn install && quasar build ios -- --release --device --buildConfig='build.json' 
@@ -67,6 +66,7 @@ workflows:
     artifacts:
       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*.ipa
       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*
+      - /Users/builder/clone/platforms/ios/build/device/*.ipa
       - /Users/builder/clone/platforms/ios/*
       - /Users/builder/clone/cordova/platforms/ios/build/device/*.ipa
       - /tmp/xcodebuild_logs/*.log        
