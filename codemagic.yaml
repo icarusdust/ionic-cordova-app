@@ -1,7 +1,7 @@
 workflows:
   ios-workflow:
     name: iOS workflow
-    instance_type: mac_pro
+    instance_type: mac_mini_m1
     environment:
       groups:
           - app_store_credentials 
