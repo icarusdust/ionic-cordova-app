@@ -53,7 +53,7 @@ workflows:
           EOF
             yarn install
             yarn global add @quasar/cli
-            quasar build -m ios 
+            quasar build -m ios --release
 #           yarn install
 #           yarn global add @quasar/cli
 #           cd quasar-project && yarn install && quasar build ios -- --release --device --buildConfig='build.json' 
