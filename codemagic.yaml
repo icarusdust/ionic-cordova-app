@@ -65,12 +65,12 @@ workflows:
 #           cd quasar-project && yarn install && quasar build ios -- --release --device --buildConfig='build.json' 
           # ionic cordova build ios --release --device --buildConfig='../build.json' 
     artifacts:
-      - /Users/builder/clone/src-cordova/platforms/ios/build/device/*.ipa
-      - /Users/builder/clone/src-cordova/platforms/ios/build/device/*
-      - /Users/builder/clone/platforms/ios/build/device/*.ipa
-      - /Users/builder/clone/platforms/ios/*
-      - /Users/builder/clone/cordova/platforms/ios/build/device/*.ipa
-      - /tmp/xcodebuild_logs/*.log        
+      - /Users/builder/clone/quasar-project/src-cordova/platforms/ios/build/device/*.ipa
+#       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*
+#       - /Users/builder/clone/platforms/ios/build/device/*.ipa
+#       - /Users/builder/clone/platforms/ios/*
+#       - /Users/builder/clone/cordova/platforms/ios/build/device/*.ipa
+#       - /tmp/xcodebuild_logs/*.log        
 #       - name: Build iOS
 #         script: |
 #             set -e
