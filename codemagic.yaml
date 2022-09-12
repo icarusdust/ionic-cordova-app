@@ -57,8 +57,9 @@ workflows:
                 }
               }
           EOF
-#       quasar build -m ios --release --device --buildConfig='build.json'
+
             quasar build -m cordova -T ios -- --release --device --buildConfig='/build.json'
+#     quasar build -m ios --release --device --buildConfig='build.json'
 #           yarn install
 #           yarn global add @quasar/cli
 #           cd quasar-project && yarn install && quasar build ios -- --release --device --buildConfig='build.json' 
