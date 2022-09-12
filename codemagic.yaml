@@ -63,7 +63,7 @@ workflows:
 #           yarn install
 #           yarn global add @quasar/cli
 #           cd quasar-project && yarn install && quasar build ios -- --release --device --buildConfig='build.json' 
-          # ionic cordova build ios --release --device --buildConfig='../build.json' 
+          # ionic cordova build ios --release --device --buildConfig='build.json' 
     artifacts:
       - /Users/builder/clone/quasar-project/src-cordova/platforms/ios/build/device/*.ipa
 #       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*
