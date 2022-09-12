@@ -58,7 +58,7 @@ workflows:
               }
           EOF
 
-             quasar build -m ios -- --release --device --buildConfig='../build.json'
+             quasar build -m ios --release --device --buildConfig='../build.json'
 #     quasar build -m ios --release --device --buildConfig='build.json'
 #           yarn install
 #           yarn global add @quasar/cli
