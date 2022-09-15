@@ -13,7 +13,7 @@ workflows:
     scripts:
       - name: Rosetta
         script: |
-          softwareupdate --install-rosetta
+          softwareupdate --install-rosetta --agree-to-license
       - name: Install dependencies
         script: |
           yarn global add @quasar/cli
