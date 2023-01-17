@@ -1,6 +1,9 @@
 workflows:
   android-workflow:
     name: Android workflow   
+    environment:
+      android_signing:
+        - android_signing
     scripts:
       - name: Install dependencies
         script: |
