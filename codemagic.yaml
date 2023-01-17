@@ -19,10 +19,7 @@ workflows:
         script: |
           set -x
           ionic cordova platform remove android --nosave
-          ionic cordova platform add android \
-            --confirm \
-            --no-interactive \
-            --noresources 
+          ionic cordova platform add android
       - name: Build Android
         script: |    
           set -x
