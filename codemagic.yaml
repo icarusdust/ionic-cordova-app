@@ -1,159 +1,37 @@
 workflows:
-  ios-workflow:
-    name: iOS workflow
-    instance_type: mac_mini_m1
-    environment:
-      groups:
-          - app_store_credentials 
-      vars:      
-        BUNDLE_ID: "org.codemagic.quasar.app" # <-- Put your Bundle Id here 
-      xcode: latest
-      node: 14.10.0
-    working_directory: quasar-project
+  android-workflow:
+    name: Android workflow   
     scripts:
-#       - name: Rosetta
-#         script: |
-#           softwareupdate --install-rosetta --agree-to-license
       - name: Install dependencies
         script: |
-          yarn global add @quasar/cli
-          yarn install
-          cd src-cordova
-          yarn install
-          mkdir www
-          cordova prepare ios
-          cordova plugin save
-          cd ..
-#       - name: Setup iOS
-#         script: |
-#           ionic cordova platform remove ios --nosave
-#           ionic cordova platform add ios --confirm --no-interactive --noresources --save  
-      - name: Set up keychain to be used for codesigning using Codemagic CLI 'keychain' command
+          npm install
+          npm ci ci # equivalent of npm install for CI systems.
+            # Requires package-lock.json or npm-shrinkwrap.json to be present
+          cvm install 9.0.0
+          cvm use 9.0.0
+          npm install -g ionic
+          ionic info        
+      - name: Add Android platform
         script: |
-          keychain initialize
-      - name: Fetch signing files
-        script: |
-          app-store-connect fetch-signing-files $BUNDLE_ID --type IOS_APP_ADHOC --create          
-      - name: Add certificates to keychain
-        script: |
-          keychain add-certificates         
-      - name: Set up code signing settings on Xcode project
-        script: |
-          xcode-project use-profiles
-      - name: Build iOS
-        script: | 
+          set -x
+          ionic cordova platform remove android --nosave
+          ionic cordova platform add android \
+            --confirm \
+            --no-interactive \
+            --noresources 
+      - name: Build Android
+        script: |    
+          set -x
           set -e
-          package_type=$(defaults read ~/export_options.plist method)
-          identity=$(defaults read ~/export_options.plist signingCertificate)
-          team=$(defaults read ~/export_options.plist teamID)
-          profile=$(find '/Users/builder/Library/MobileDevice/Provisioning Profiles' -name "*.mobileprovision")
-          profile_uuid=$(grep UUID -A1 -a "$profile" | grep -io "[-A-F0-9]\{36\}")       
-          cat <<EOF > build.json
-              {
-                "ios": {
-                  "release": {
-                    "codeSignIdentity": "$identity",
-                    "developmentTeam": "$team",
-                    "packageType": "$package_type",
-                    "provisioningProfile": "$profile_uuid"
-                  }
-                }
-              }
-          EOF
-
-             quasar build -m ios -- --release --device --buildConfig='../build.json'
-#     quasar build -m ios --release --device --buildConfig='build.json'
-#           yarn install
-#           yarn global add @quasar/cli
-#           cd quasar-project && yarn install && quasar build ios -- --release --device --buildConfig='build.json' 
-          # ionic cordova build ios --release --device --buildConfig='build.json' 
+          APK_PATH=$(find platforms/android/app/build/outputs/apk/release -name "*.apk" | head -1)
+          jarsigner \
+            -sigalg SHA1withRSA \
+            -digestalg SHA1 \
+            -keystore $CM_KEYSTORE_PATH \
+            -storepass $CM_KEYSTORE_PASSWORD \
+            -keypass $CM_KEY_PASSWORD \
+            $APK_PATH $CM_KEY_ALIAS 
     artifacts:
-      - /Users/builder/clone/quasar-project/src-cordova/platforms/ios/build/device/*.ipa
-#       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*
-#       - /Users/builder/clone/platforms/ios/build/device/*.ipa
-#       - /Users/builder/clone/platforms/ios/*
-#       - /Users/builder/clone/cordova/platforms/ios/build/device/*.ipa
-#       - /tmp/xcodebuild_logs/*.log        
-#       - name: Build iOS
-#         script: |
-#             set -e
-#             yarn install
-#             yarn global add @quasar/cli
-#             quasar build -m cordova -T ios
-#     artifacts:
-#       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*.ipa
-#       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*
-#       - /Users/builder/clone/platforms/ios/*
-#       - /Users/builder/clone/cordova/platforms/ios/build/device/*.ipa
-#       - /tmp/xcodebuild_logs/*.log
-# workflows:
-#   ios-workflow:
-#     name: iOS workflow
-#     instance_type: mac_pro
-#     environment:
-#       groups:
-#         # Add the group environment variables in Codemagic UI (either in Application/Team variables) - https://docs.codemagic.io/variables/environment-variable-groups/
-#           - app_store_credentials
-#       vars:      
-#         BUNDLE_ID: "io.myapp.ioniccordova" # <-- Put your Bundle Id here 
-#       xcode: latest
-#       node: v16.11.1
-#       npm: 6
-#     cache:
-#       cache_paths:
-#         - $FCI_BUILD_DIR/node_modules
-#     scripts:
-#       - name: Install dependencies
-#         script: |
-#           set -e
-#           npm install
-#           npm ci
-#           npm install -g ionic
-#           ionic info   
-#       - name: Setup iOS
-#         script: |
-#           ionic cordova platform remove ios --nosave
-#           ionic cordova platform add ios --confirm --no-interactive --noresources --save  
-#       - name: Set up keychain to be used for codesigning using Codemagic CLI 'keychain' command
-#         script: |
-#           keychain initialize
-#       - name: Fetch signing files
-#         script: |
-#           app-store-connect fetch-signing-files $BUNDLE_ID --type IOS_APP_STORE --create
-#       - name: Add certificates to keychain
-#         script: |
-#           keychain add-certificates         
-#       - name: Set up code signing settings on Xcode project
-#         script: |
-#           xcode-project use-profiles
-#       - name: Build iOS
-#         script: |
-#           package_type=$(defaults read ~/export_options.plist method)
-#           identity=$(defaults read ~/export_options.plist signingCertificate)
-#           team=$(defaults read ~/export_options.plist teamID)
-#           profile=$(find '/Users/builder/Library/MobileDevice/Provisioning Profiles' -name "*.mobileprovision")
-#           profile_uuid=$(grep UUID -A1 -a "$profile" | grep -io "[-A-F0-9]\{36\}")
-        
-#           cat <<EOF > build.json
-#               {
-#                 "ios": {
-#                   "release": {
-#                     "codeSignIdentity": "$identity",
-#                     "developmentTeam": "$team",
-#                     "packageType": "$package_type",
-#                     "provisioningProfile": "$profile_uuid"
-#                   }
-#                 }
-#               }
-#           EOF                              
-#           yarn install
-#           yarn global add @quasar/cli
-#           quasar build -m cordova -T ios -- --release --device --buildConfig='build.json'
-# #           ionic cordova build ios --release --device --buildConfig='build.json' 
-#     artifacts:
-#       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*.ipa
-#       - /Users/builder/clone/src-cordova/platforms/ios/build/device/*
-#       - /Users/builder/clone/platforms/ios/*
-#       - /Users/builder/clone/cordova/platforms/ios/build/device/*.ipa
-#       - /tmp/xcodebuild_logs/*.log 
-
+      - platforms/android/app/build/outputs/**/*.apk
+      - platforms/android/app/build/outputs/**/mapping.txt
+    
