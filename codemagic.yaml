@@ -1,6 +1,7 @@
 workflows:
   android-workflow:
     name: Android workflow   
+    instance_type: mac_pro
     environment:
       android_signing:
         - android_signing
